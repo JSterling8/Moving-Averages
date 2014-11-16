@@ -8,8 +8,8 @@ namespace MovingAverages
 {
     public class Entry
     {        
-        public DateTime Date { get; set; }
-        public decimal Price { get; set; }
+        public DateTime Date { get; private set; }
+        public decimal Price { get; private set; }
 
         public Entry ( DateTime date, decimal price )
         {
