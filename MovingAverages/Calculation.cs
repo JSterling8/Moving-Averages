@@ -15,19 +15,16 @@ namespace MovingAverages
             this.dataset = dataset;
         }
 
-        /// <summary>
-        /// Calculates the simple moving average of the dataset using a variable period such as 10 minutes
-        /// </summary>
-        /// <param name="minute">Period of the moving average, in minutes</param>
-        /// <returns>A dataset showing the calculated moving average over time</returns>
-        public Dataset calculate( int minute )
+        // <summary>
+        // Calculates the simple moving average of the dataset using a variable period such as 10 minutes
+        // </summary>
+        // <param name="minute">Period of the moving average, in minutes</param>
+        // <returns>A dataset showing the calculated moving average over time</returns>
+        public Dataset calculateAllMovingAverages( int minute )
         {
             Dataset results = new Dataset();
 
             //TODO Calculate the moving Average here
-            List<Entry> dataList = results.getEntries();
-
-
 
 
             return results;

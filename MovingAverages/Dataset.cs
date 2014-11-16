@@ -47,5 +47,34 @@ namespace MovingAverages
         {
             return entries;
         }
+
+        public int getIndexGivenDateTime(DateTime dateTimeToFind)
+        {
+            int minIndex = 0;
+            int maxIndex = entries.Count - 1;
+
+            int maxNumOfChecks = (int) Math.Log(entries.Count, 2) + 1;
+            int numOfChecksMade = 0;
+
+            while (true)
+            {
+                int indexChecking = (maxIndex + minIndex) / 2;
+
+                if (numOfChecksMade > maxNumOfChecks || minIndex < 0 || maxIndex >= entries.Count)
+                {
+                    return -1;
+                } else if (entries.ElementAt(indexChecking).Date.Equals(dateTimeToFind))
+                {
+                    return indexChecking;
+                }
+                else if (entries.ElementAt(indexChecking).Date > dateTimeToFind)
+                {
+                    maxIndex = indexChecking - 1;
+                } else {
+                    minIndex = indexChecking + 1;
+                }
+                numOfChecksMade++;
+            }
+        }
     }
 }

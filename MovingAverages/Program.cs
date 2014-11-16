@@ -14,7 +14,7 @@ namespace MovingAverages
             dataset.load("MovingAveragesData.csv");
 
             Calculation calculation = new Calculation( dataset );
-            Dataset results = calculation.calculate( 10 );
+            Dataset results = calculation.calculateAllMovingAverages( 10 );
         }
     }
 }
