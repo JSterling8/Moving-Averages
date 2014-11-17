@@ -74,8 +74,15 @@ namespace MovingAverages
             foreach(decimal data in prices){
                 sum += data;
             }
-            
-            return sum / ((decimal) prices.Count);
+
+            if (prices.Count == 0)
+            {
+                return -1;
+            }
+            else
+            {
+                return sum / ((decimal)prices.Count);
+            }
         }
     }
 }
