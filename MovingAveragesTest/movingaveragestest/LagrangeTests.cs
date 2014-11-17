@@ -39,7 +39,7 @@ namespace MovingAveragesTest
         }
 
         [TestMethod]
-        public void checkSimpleInterpolation()
+        public void CheckSimpleInterpolation()
         {
             for (decimal i = -50m; i <= 50m; i += .01m)
             {

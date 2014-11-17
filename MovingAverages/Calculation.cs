@@ -125,7 +125,12 @@ namespace MovingAverages
             return sum / ((decimal)datesAndPrices.Count);
         }
 
-
+        /// <summary>
+        /// Interpolates the data using Lagrange interpolation.
+        /// </summary>
+        /// <param name="datesAndPrices">The list of dates and prices to attempt to fill holes for.</param>
+        /// <param name="maxPossibleNumOfEntries">The maximum number of entries possible after interpolation.</param>
+        /// <returns>Returns the original Entry List, but with interpolated data filling in the holes.</returns>
         private List<Entry> interpolate(List<Entry> datesAndPrices, int maxPossibleNumOfEntries)
         {
             decimal[] indicesNeeded = new decimal[maxPossibleNumOfEntries - datesAndPrices.Count];
@@ -160,7 +165,12 @@ namespace MovingAverages
             return datesAndPrices;
         }
 
-        // This method only works for a list of contiguous prices (call interpolate() first to make your list contiguous).
+        /// <summary>
+        /// This method only works for a list of contiguous prices (call interpolate() first to make your list contiguous).
+        /// </summary>
+        /// <param name="datesAndPrices"></param>
+        /// <param name="maxNumberOfEntries"></param>
+        /// <returns></returns>
         private List<Entry> extrapolate(List<Entry> datesAndPrices, int maxNumberOfEntries)
         {
             // If we only have one or two dates and prices, we want to look forwards to see if we can find a few more, but only if they're contiguous.

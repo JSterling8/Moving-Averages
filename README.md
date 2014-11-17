@@ -8,5 +8,5 @@ Write tests before each step!<br />
 [2] Implement SMA without interpolation or extrapolation<br />
 [3] Add interpolation<br />
 [4] Add extrapolation<br />
-[5] Add flags to let user decide whether or not to interpolate and/or extrapolate<br />
+[5] <i>Add flags to allow users to specify if they want interpolation and/or extrapolation.</i> - <b>Omitted</b><br />
 [6] Make sure code documentation is thorough and up to date<br />

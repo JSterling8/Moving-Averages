@@ -19,13 +19,13 @@ namespace MovingAveragesTest
         }
 
         [TestMethod]
-        public void LoadCountTest()
+        public void CheckLoadCount()
         {
             Assert.AreEqual(2843, dataset.getEntries().Count );
         }
 
         [TestMethod]
-        public void FirstEntryPriceTest()
+        public void CheckFirstEntryPrice()
         {
             Assert.AreEqual(1.33877M, dataset.getEntries().First().Price);
         }
@@ -40,7 +40,7 @@ namespace MovingAveragesTest
         }
 
         [TestMethod]
-        public void TestValidIndexLookup()
+        public void CheckValidIndexLookup()
         {
             // Invalid range (before any valid data)
             Assert.AreEqual(-1, dataset.getIndexGivenDateTime(new DateTime(2013, 08, 01, 00, 01, 00)));
@@ -59,7 +59,7 @@ namespace MovingAveragesTest
         }
 
         [TestMethod]
-        public void TestLookupOfInvalidIndexes()
+        public void CheckLookupOfInvalidIndexes()
         {
             // Invalid date (before any valid data)
             Assert.AreEqual(-1, dataset.getIndexGivenDateTime(new DateTime(2013, 08, 01, 00, 01, 00)));

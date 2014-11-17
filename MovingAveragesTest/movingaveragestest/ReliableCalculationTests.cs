@@ -49,7 +49,7 @@ namespace MovingAveragesTest
         }
 
         [TestMethod]
-        public void TestBasicCalculation()
+        public void CheckBasicCalculation()
         {
             results = calulation.calculateAllMovingAverages(10);
             Assert.AreEqual(1.645M, results.getEntries().Last().Price);
@@ -57,7 +57,7 @@ namespace MovingAveragesTest
         }
         
         [TestMethod]
-        public void TestExtrapolatedCalculation()
+        public void CheckExtrapolatedCalculation()
         {
             results = calulation.calculateAllMovingAverages(10);
 
@@ -70,7 +70,7 @@ namespace MovingAveragesTest
         }
 
         [TestMethod]
-        public void TestWhenRangeIsEqualToSize()
+        public void CheckWhenRangeIsEqualToSize()
         {
             Dataset results = calulation.calculateAllMovingAverages(reliableDataset.getEntries().Count);
 
@@ -80,7 +80,7 @@ namespace MovingAveragesTest
         }
 
         [TestMethod]
-        public void TestRangeOfZero()
+        public void CheckRangeOfZero()
         {
             results = calulation.calculateAllMovingAverages(0);
 
@@ -91,7 +91,7 @@ namespace MovingAveragesTest
         }
 
         [TestMethod]
-        public void TestNegativeRange()
+        public void CheckNegativeRange()
         {
             ArgumentOutOfRangeException exceptionWeShouldCatch = null;
 
