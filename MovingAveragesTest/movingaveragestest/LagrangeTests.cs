@@ -44,7 +44,7 @@ namespace MovingAveragesTest
             for (decimal i = -50m; i <= 50m; i += .01m)
             {
                 decimal correctAnswer = (2*i) + 3;
-                decimal interpolatorsAnswer = LagrangeInterpolater.getInterpolatedValueGivenListAndInsertionIndex(simpleXValues, simpleYValues, (decimal) i);
+                decimal interpolatorsAnswer = LagrangeInterpolater.getInterpolatedValueGivenCurrentValuesAndIndexToFind(simpleXValues, simpleYValues, (decimal) i);
                 decimal difference = Math.Abs(correctAnswer - interpolatorsAnswer);
 
                 Assert.IsTrue(difference <= TOLERANCE, "The difference from the correct answer for input: " + i + " was: " + difference);
@@ -56,7 +56,7 @@ namespace MovingAveragesTest
             for (decimal i = -50m; i <= 50m; i += .01m)
             {
                 decimal correctAnswer = (2 * (decimal)Math.Pow((double)i, 3)) - (4 * (decimal)Math.Pow((double)i, 2)) + (3 * i) + 3; ;
-                decimal interpolatorsAnswer = LagrangeInterpolater.getInterpolatedValueGivenListAndInsertionIndex(complexXValues, complexYValues, (decimal)i);
+                decimal interpolatorsAnswer = LagrangeInterpolater.getInterpolatedValueGivenCurrentValuesAndIndexToFind(complexXValues, complexYValues, (decimal)i);
                 decimal difference = Math.Abs(correctAnswer - interpolatorsAnswer);
 
                 Assert.IsTrue(difference <= TOLERANCE, "The difference from the correct answer for input: " + i + " was: " + difference);

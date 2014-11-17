@@ -52,7 +52,6 @@ namespace MovingAverages
         {
             int minIndex = 0;
             int maxIndex = entries.Count - 1;
-
             int maxNumOfChecks = (int) Math.Log(entries.Count, 2) + 1;
             int numOfChecksMade = 0;
 

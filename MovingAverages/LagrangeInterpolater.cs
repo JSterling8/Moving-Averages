@@ -8,7 +8,7 @@ namespace MovingAverages
 {
     public class LagrangeInterpolater
     {
-        public static decimal getInterpolatedValueGivenListAndInsertionIndex(decimal[] xValues, decimal[] yValues, decimal fOfXLookingFor)
+        public static decimal getInterpolatedValueGivenCurrentValuesAndIndexToFind(decimal[] xValues, decimal[] yValues, decimal fOfXLookingFor)
         {
             decimal[] f = new decimal[xValues.Length];
 
@@ -23,7 +23,10 @@ namespace MovingAverages
                     }
                     else
                     {
-                        temp = temp * ((fOfXLookingFor - xValues[j]) / (xValues[i] - xValues[j]));
+                        if (xValues[i] - xValues[j] != 0)
+                        {
+                            temp = temp * ((fOfXLookingFor - xValues[j]) / (xValues[i] - xValues[j]));
+                        }
                     }
                 }
                 f[i] = yValues[i] * temp;
