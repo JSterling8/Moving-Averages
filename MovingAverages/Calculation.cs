@@ -31,7 +31,6 @@ namespace MovingAverages
 
             Dataset results = new Dataset();
 
-            //TODO Calculate the moving Average here
             List<DateTime> dates = new List<DateTime>();
             List<decimal> prices = new List<decimal>();
 
@@ -86,18 +85,18 @@ namespace MovingAverages
                 maxPossibleNumOfEntries = minutes;
             }
 
-            return calculateAveragePrice(datesAndPrices, maxPossibleNumOfEntries);
+            return calculateAveragePriceOfEntryList(datesAndPrices, maxPossibleNumOfEntries);
         }
 
         /// <summary>
-        /// Given a dataset and max number of possible entries over the time period the dataset is supposed to cover, 
-        /// this method interpolates and extrapolates the dataset as necessary, then calculates an average price.
+        /// Given an Entry List and max number of possible entries over the time period the entries cover, 
+        /// this method interpolates and extrapolates the dataset as necessary, then calculates an average price for the time period.
         /// </summary>
         /// <param name="endTime">The last time in the moving average 
         /// (i.e., in the moving average for 12:01, 12:02, and 12:03, 12:03 would be the endTime.</param>
         /// <param name="minutes">The number of minutes in the moving average</param>
         /// <returns>The average value in the moving average that ends at the given endTime and starts at (endTime - (minutes-1))</returns>
-        private decimal calculateAveragePrice(List<Entry> datesAndPrices, int maxPossibleNumOfEntries)
+        private decimal calculateAveragePriceOfEntryList(List<Entry> datesAndPrices, int maxPossibleNumOfEntries)
         {
             if (datesAndPrices.Count == 0)
             {
@@ -126,7 +125,7 @@ namespace MovingAverages
         }
 
         /// <summary>
-        /// Interpolates the data using Lagrange interpolation.
+        /// Interpolates the data to fill holes in it by using Lagrange interpolation.
         /// </summary>
         /// <param name="datesAndPrices">The list of dates and prices to attempt to fill holes for.</param>
         /// <param name="maxPossibleNumOfEntries">The maximum number of entries possible after interpolation.</param>
@@ -167,9 +166,11 @@ namespace MovingAverages
 
         /// <summary>
         /// This method only works for a list of contiguous prices (call interpolate() first to make your list contiguous).
+        /// Extrapolates the data preceding the list, so that the amount of data put in, combined with the data extrapolated equals the maximum 
+        /// number of entries possible over the given time range.
         /// </summary>
-        /// <param name="datesAndPrices"></param>
-        /// <param name="maxNumberOfEntries"></param>
+        /// <param name="datesAndPrices">The contiguous dates and prices to extrapolate.</param>
+        /// <param name="maxNumberOfEntries">The maximum number of unique DateTimes that can be in the DateTime range.</param>
         /// <returns></returns>
         private List<Entry> extrapolate(List<Entry> datesAndPrices, int maxNumberOfEntries)
         {
@@ -186,9 +187,9 @@ namespace MovingAverages
                     }
                     else
                     {
-                        // With the current implementation, we have to break if even one is more than a minute off, otherwise our xValues and yValues 
+                        // With the current implementation, we have to break if one future date is more than a minute off, otherwise our xValues and yValues 
                         // will be skewed below. Realistically, this *can* be improved upon (getting 5 forward values without checking for the minute 
-                        // different, then interpolating them).
+                        // different then interpolating them).
                         break;
                     }
                 }

@@ -10,12 +10,13 @@ namespace MovingAverages
     {
 
         /// <summary>
+        /// Performs a lagrange interpolation on a given set of x and y values.
         /// This method was adopted from the code here: http://www.dailyfreecode.com/code/lagranges-interpolation-method-finding-2376.aspx
         /// </summary>
         /// <param name="xValues">The x values from a function</param>
         /// <param name="yValues">The f(x) values from a function</param>
         /// <param name="fOfXLookingFor">The f(x) value to look for in the function</param>
-        /// <returns></returns>
+        /// <returns>The value of f(fOfXLookingFor), found via lagrange interpolation.</returns>
         public static decimal getInterpolatedValueGivenCurrentValuesAndIndexToFind(decimal[] xValues, decimal[] yValues, decimal fOfXLookingFor)
         {
             if (xValues.Length != yValues.Length)

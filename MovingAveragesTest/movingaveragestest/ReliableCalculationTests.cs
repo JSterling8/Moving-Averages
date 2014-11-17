@@ -49,11 +49,11 @@ namespace MovingAveragesTest
         }
 
         [TestMethod]
-        public void CheckBasicCalculation()
+        public void CheckBasicCalculations()
         {
             results = calulation.calculateAllMovingAverages(10);
             Assert.AreEqual(1.645M, results.getEntries().Last().Price);
-            
+            Assert.AreEqual(1.555M, results.getEntries().ElementAt(results.getEntries().Count / 2).Price);
         }
         
         [TestMethod]

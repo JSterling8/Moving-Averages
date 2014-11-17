@@ -48,8 +48,19 @@ namespace MovingAverages
             return entries;
         }
 
+        /// <summary>
+        /// Performs a simple binary search of the data in order to find the index of a given DateTime.
+        /// This method assumes all DateTime entries are unique.
+        /// </summary>
+        /// <param name="dateTimeToFind">The DateTime whose index you wish to find.</param>
+        /// <returns>The index of entries for the DateTime provided.  Returns -1 if the index can't be found.</returns>
         public int getIndexGivenDateTime(DateTime dateTimeToFind)
         {
+            if (entries.Count == 0)
+            {
+                throw new NullReferenceException("You're attempting to look up and entry before adding any entries.");
+            }
+
             int minIndex = 0;
             int maxIndex = entries.Count - 1;
             int maxNumOfChecks = (int) Math.Log(entries.Count, 2) + 1;

@@ -31,6 +31,12 @@ namespace MovingAveragesTest
         }
 
         [TestMethod]
+        public void CheckLastEntryPrice()
+        {
+            Assert.AreEqual(1.34205M, dataset.getEntries().Last().Price);
+        }
+
+        [TestMethod]
         public void ShowAllEntriesTest()
         {
             foreach( Entry entry in dataset.getEntries() )
