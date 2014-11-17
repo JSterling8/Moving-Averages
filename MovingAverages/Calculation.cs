@@ -22,6 +22,13 @@ namespace MovingAverages
         // <returns>A dataset showing the calculated moving average over time</returns>
         public Dataset calculateAllMovingAverages(int minute)
         {
+            if (minute < 0)
+            {
+                throw new ArgumentOutOfRangeException("A negative number of minutes was passed.  Minutes must be >= 0.");
+            } else if (minute == 0){
+                return dataset;
+            }
+
             Dataset results = new Dataset();
 
             //TODO Calculate the moving Average here
@@ -47,15 +54,13 @@ namespace MovingAverages
             DateTime startTime = endTime.Subtract(new TimeSpan(00, (minute), 00));
             int endIndex = dataset.getIndexGivenDateTime(endTime);
 
-            List<DateTime> dates = new List<DateTime>();
-            List<decimal> prices = new List<decimal>();
+            List<Entry> datesAndPrices = new List<Entry>();
 
             while (endIndex >= 0)
             {
                 if (dataset.getEntries().ElementAt(endIndex).Date > startTime)
                 {
-                    dates.Add(dataset.getEntries().ElementAt(endIndex).Date);
-                    prices.Add(dataset.getEntries().ElementAt(endIndex).Price);
+                    datesAndPrices.Add(dataset.getEntries().ElementAt(endIndex));
                     endIndex--;
                 }
                 else
@@ -71,72 +76,70 @@ namespace MovingAverages
             }
             else
             {
-                maxPossibleNumOfEntries = endIndex;
+                maxPossibleNumOfEntries = minute;
             }
-            return calculateAveragePrice(dates, prices, maxPossibleNumOfEntries);
+            return calculateAveragePrice(datesAndPrices, maxPossibleNumOfEntries);
         }
 
-        private decimal calculateAveragePrice(List<DateTime> dates, List<decimal> prices, int maxPossibleNumOfEntries)
+        private decimal calculateAveragePrice(List<Entry> datesAndPrices, int maxPossibleNumOfEntries)
         {
-            if (prices.Count == 0)
+            if (datesAndPrices.Count == 0)
             {
                 return -1;
             }
-
-            if (prices.Count < maxPossibleNumOfEntries)
+            
+            List<Entry> updatedDatesAndPrices = new List<Entry>();
+            if (datesAndPrices.Count < maxPossibleNumOfEntries)
             {
-                prices = interpolate(dates, prices, maxPossibleNumOfEntries);
+                updatedDatesAndPrices = interpolate(datesAndPrices, maxPossibleNumOfEntries);
+
             }
+
 
             decimal sum = 0;
 
-            foreach (decimal data in prices)
+            foreach (Entry entry in datesAndPrices)
             {
-                sum += data;
+                sum += entry.Price;
             }
 
 
-            return sum / ((decimal)prices.Count);
+            return sum / ((decimal)datesAndPrices.Count);
 
         }
 
-        private List<decimal> interpolate(List<DateTime> dates, List<decimal> prices, int maxPossibleNumOfEntries)
+        private List<Entry> interpolate(List<Entry> datesAndPrices, int maxPossibleNumOfEntries)
         {
-            if (dates.ElementAt(0).Equals(new DateTime(2014, 08, 04, 23, 48, 00)))
-            {
-                // Find me debugger;
-                int asfd = 0;
-            }
-
-            decimal[] indicesNeeded = new decimal[maxPossibleNumOfEntries - prices.Count];
+            decimal[] indicesNeeded = new decimal[maxPossibleNumOfEntries - datesAndPrices.Count];
             int numOfFoundNeededIndices = 0;
 
             decimal[] xValues = new decimal[maxPossibleNumOfEntries];
             decimal[] yValues = new decimal[maxPossibleNumOfEntries];
 
             // Find the indices that we need to fill
-            for (int i = 0; i < dates.Count - 1; i++)
+            for (int i = 0; i < datesAndPrices.Count - 1; i++)
             {
-                if (dates.ElementAt(i).Subtract(dates.ElementAt(i + 1)).Minutes > 1)
+                if (datesAndPrices.ElementAt(i).Date.Subtract(datesAndPrices.ElementAt(i + 1).Date).Minutes > 1)
                 {
                     indicesNeeded[numOfFoundNeededIndices] = i;
                 }
                 xValues[i] = i;
-                yValues[i] = prices.ElementAt(i);
+                yValues[i] = datesAndPrices.ElementAt(i).Price;
             }
 
-            // Insert those values into our price and date list.
-            for (int j = prices.Count - 1; j > 0; j--)
+            // Insert the values for the indices we found into our price and date list.
+            for (int j = datesAndPrices.Count - 1; j > 0; j--)
             {
                 if (indicesNeeded.Contains(j))
                 {
-                    prices.Insert(j, LagrangeInterpolater.getInterpolatedValueGivenCurrentValuesAndIndexToFind(xValues, yValues, j));
-                    dates.Insert(j, dates.ElementAt(j).Add(new TimeSpan(0, 1, 0)));
+                    decimal priceToInsert = LagrangeInterpolater.getInterpolatedValueGivenCurrentValuesAndIndexToFind(xValues, yValues, j);
+                    DateTime dateToInsert = datesAndPrices.ElementAt(j).Date.Add(new TimeSpan(0, 1, 0));
+                    datesAndPrices.Insert(j, new Entry(dateToInsert, priceToInsert));
                     j--;
                 }
             }
 
-            return prices;
+            return datesAndPrices;
         }
     }
 }
