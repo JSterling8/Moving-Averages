@@ -10,6 +10,8 @@ namespace MovingAveragesTest
     [TestClass]
     public class LagrangeTests
     {
+        private const decimal TOLERANCE = 0.0000000000001m;
+
         private decimal[] simpleXValues;
         private decimal[] simpleYValues;
         private decimal[] complexXValues;
@@ -44,8 +46,8 @@ namespace MovingAveragesTest
                 decimal correctAnswer = (2*i) + 3;
                 decimal interpolatorsAnswer = LagrangeInterpolater.getInterpolatedValueGivenListAndInsertionIndex(simpleXValues, simpleYValues, (decimal) i);
                 decimal difference = Math.Abs(correctAnswer - interpolatorsAnswer);
-                
-                Assert.IsTrue(difference < 0.0000000000001m);
+
+                Assert.IsTrue(difference <= TOLERANCE, "The difference from the correct answer for input: " + i + " was: " + difference);
             }
         }
 
@@ -56,8 +58,8 @@ namespace MovingAveragesTest
                 decimal correctAnswer = (2 * (decimal)Math.Pow((double)i, 3)) - (4 * (decimal)Math.Pow((double)i, 2)) + (3 * i) + 3; ;
                 decimal interpolatorsAnswer = LagrangeInterpolater.getInterpolatedValueGivenListAndInsertionIndex(complexXValues, complexYValues, (decimal)i);
                 decimal difference = Math.Abs(correctAnswer - interpolatorsAnswer);
-                
-                Assert.IsTrue(difference < 0.0000000000001m);
+
+                Assert.IsTrue(difference <= TOLERANCE, "The difference from the correct answer for input: " + i + " was: " + difference);
             }
         }
     }
