@@ -15,17 +15,17 @@ namespace MovingAverages
             this.dataset = dataset;
         }
 
-        // <summary>
-        // Calculates the simple moving average of the dataset using a variable period such as 10 minutes
-        // </summary>
-        // <param name="minute">Period of the moving average, in minutes</param>
-        // <returns>A dataset showing the calculated moving average over time</returns>
-        public Dataset calculateAllMovingAverages(int minute)
+        /// <summary>
+        /// Calculates the simple moving average of the dataset using a variable period such as 10 minutes
+        /// </summary>
+        /// <param name="minutes">Period of the moving average, in minutes</param>
+        /// <returns>A dataset showing the calculated moving average over time</returns>
+        public Dataset calculateAllMovingAverages(int minutes)
         {
-            if (minute < 0)
+            if (minutes < 0)
             {
                 throw new ArgumentOutOfRangeException("A negative number of minutes was passed.  Minutes must be >= 0.");
-            } else if (minute == 0){
+            } else if (minutes == 0){
                 return dataset;
             }
 
@@ -39,7 +39,7 @@ namespace MovingAverages
 
             foreach (Entry entry in entries)
             {
-                decimal average = calculateSingleAverageGivenDateTime(entry.Date, minute);
+                decimal average = calculateSingleAverageGivenDateTime(entry.Date, minutes);
                 dates.Add(entry.Date);
                 prices.Add(average);
             }
@@ -49,16 +49,23 @@ namespace MovingAverages
             return results;
         }
 
-        private decimal calculateSingleAverageGivenDateTime(DateTime endTime, int minute)
+        /// <summary>
+        /// Calculates the average value in the Dataset between a given endTime and (endTime - (minutes-1))
+        /// </summary>
+        /// <param name="endTime">The last time in the moving average 
+        /// (i.e., in the moving average for 12:01, 12:02, and 12:03, 12:03 would be the endTime.</param>
+        /// <param name="minutes">The number of minutes in the moving average</param>
+        /// <returns>The average value in the moving average that ends at the given endTime and starts at (endTime - (minutes-1))</returns>
+        private decimal calculateSingleAverageGivenDateTime(DateTime endTime, int minutes)
         {
-            DateTime startTime = endTime.Subtract(new TimeSpan(00, (minute), 00));
+            DateTime startTime = endTime.Subtract(new TimeSpan(00, (minutes - 1), 00));
             int endIndex = dataset.getIndexGivenDateTime(endTime);
 
             List<Entry> datesAndPrices = new List<Entry>();
 
             while (endIndex >= 0)
             {
-                if (dataset.getEntries().ElementAt(endIndex).Date > startTime)
+                if (dataset.getEntries().ElementAt(endIndex).Date >= startTime)
                 {
                     datesAndPrices.Add(dataset.getEntries().ElementAt(endIndex));
                     endIndex--;
@@ -70,17 +77,26 @@ namespace MovingAverages
             }
 
             int maxPossibleNumOfEntries;
-            if (endIndex >= minute - 1)
+            if (endIndex >= minutes - 1)
             {
-                maxPossibleNumOfEntries = minute;
-            }
+                maxPossibleNumOfEntries = minutes;
+            } 
             else
             {
-                maxPossibleNumOfEntries = minute;
+                maxPossibleNumOfEntries = minutes;
             }
+
             return calculateAveragePrice(datesAndPrices, maxPossibleNumOfEntries);
         }
 
+        /// <summary>
+        /// Given a dataset and max number of possible entries over the time period the dataset is supposed to cover, 
+        /// this method interpolates and extrapolates the dataset as necessary, then calculates an average price.
+        /// </summary>
+        /// <param name="endTime">The last time in the moving average 
+        /// (i.e., in the moving average for 12:01, 12:02, and 12:03, 12:03 would be the endTime.</param>
+        /// <param name="minutes">The number of minutes in the moving average</param>
+        /// <returns>The average value in the moving average that ends at the given endTime and starts at (endTime - (minutes-1))</returns>
         private decimal calculateAveragePrice(List<Entry> datesAndPrices, int maxPossibleNumOfEntries)
         {
             if (datesAndPrices.Count == 0)
@@ -108,6 +124,7 @@ namespace MovingAverages
 
             return sum / ((decimal)datesAndPrices.Count);
         }
+
 
         private List<Entry> interpolate(List<Entry> datesAndPrices, int maxPossibleNumOfEntries)
         {
@@ -146,6 +163,27 @@ namespace MovingAverages
         // This method only works for a list of contiguous prices (call interpolate() first to make your list contiguous).
         private List<Entry> extrapolate(List<Entry> datesAndPrices, int maxNumberOfEntries)
         {
+            // If we only have one or two dates and prices, we want to look forwards to see if we can find a few more, but only if they're contiguous.
+            if (datesAndPrices.Count <= maxNumberOfEntries / 2)
+            {
+                for (int i = 1; i <= maxNumberOfEntries / 2; i++)
+                {
+                    int nextValuesIndex = dataset.getIndexGivenDateTime(datesAndPrices.Last().Date) + i;
+                    if (nextValuesIndex < dataset.getEntries().Count &&
+                        dataset.getEntries().ElementAt(nextValuesIndex).Date.Subtract(datesAndPrices.Last().Date) == new TimeSpan(0, i, 0))
+                    {
+                        datesAndPrices.Add(dataset.getEntries().ElementAt(nextValuesIndex));
+                    }
+                    else
+                    {
+                        // With the current implementation, we have to break if even one is more than a minute off, otherwise our xValues and yValues 
+                        // will be skewed below. Realistically, this *can* be improved upon (getting 5 forward values without checking for the minute 
+                        // different, then interpolating them).
+                        break;
+                    }
+                }
+            }
+
             decimal[] xValues = new decimal[datesAndPrices.Count];
             decimal[] yValues = new decimal[datesAndPrices.Count];
 
@@ -159,7 +197,7 @@ namespace MovingAverages
 
             for (int j = 0; j < numberOfExtrapolationsToCalculate; j++)
             {
-                decimal priceToInsert = LagrangeInterpolater.getInterpolatedValueGivenCurrentValuesAndIndexToFind(xValues, yValues, 0 - j);
+                decimal priceToInsert = LagrangeInterpolater.getInterpolatedValueGivenCurrentValuesAndIndexToFind(xValues, yValues, 0 - j - 1);
                 DateTime dateToInsert = datesAndPrices.ElementAt(0).Date.Subtract(new TimeSpan(0, 1, 0));
                 datesAndPrices.Insert(0, new Entry(dateToInsert, priceToInsert));
             }

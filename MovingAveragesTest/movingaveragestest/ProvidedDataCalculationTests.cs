@@ -10,6 +10,7 @@ namespace MovingAveragesTest
     [TestClass]
     public class ProvidedDataCalculationTests
     {
+        private const decimal TOLERANCE = 0.0000000000001m;
         private Dataset providedData;
         private Calculation calculation;
 
@@ -28,7 +29,12 @@ namespace MovingAveragesTest
             Dataset results = calculation.calculateAllMovingAverages(10);
 
             // Nothing preceding
-            Assert.AreEqual(1.33877M, results.getEntries().First().Price);
+            decimal expectedValue = 1.335539m;
+            decimal actualValue = results.getEntries().First().Price;
+            decimal difference = Math.Abs(expectedValue - actualValue);
+            Assert.IsTrue(difference <= TOLERANCE, "The difference between the expected and actual value was too great." + Environment.NewLine + 
+                                                            "The maximum allowed difference is: " + TOLERANCE + Environment.NewLine +
+                                                            "The actual difference was: " + difference);
 
             // Evenly spaced data
             Assert.AreEqual(1.341999M, results.getEntries().ElementAt(2840).Price);
@@ -45,9 +51,14 @@ namespace MovingAveragesTest
 
             Dataset results = calculation.calculateAllMovingAverages(10);
 
-            // TODO change expected value to account for interpolation
-            // Unevenly spaced data (i.e., 23:46, 23:48, 23:49...)
-            Assert.AreEqual(1.34203125M, results.getEntries().ElementAt(2832).Price);
+            // TODO change expected value to account for interpolation and extrapolation
+            // Unevenly spaced data (i.e., 23:46, 23:48, 23:49...) that also needs extrapolation
+            decimal expectedValue = 1.342257M;
+            decimal actualValue = results.getEntries().ElementAt(2832).Price;
+            decimal difference = Math.Abs(expectedValue - actualValue);
+            Assert.IsTrue(difference <= TOLERANCE, "The difference between the expected and actual value was too great." + Environment.NewLine +
+                                                            "The maximum allowed difference is: " + TOLERANCE + Environment.NewLine +
+                                                            "The actual difference was: " + difference);
         }
     }
 }

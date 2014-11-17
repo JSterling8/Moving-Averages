@@ -18,7 +18,7 @@ namespace MovingAveragesTest
         private decimal[] complexYValues;
 
         [TestInitialize]
-        public void testInitialize()
+        public void TestInitialize()
         {
             simpleXValues = new decimal[10];
             simpleYValues = new decimal[10];
@@ -52,7 +52,7 @@ namespace MovingAveragesTest
         }
 
         [TestMethod] 
-        public void checkComplexInterpolation(){
+        public void CheckComplexInterpolation(){
             for (decimal i = -50m; i <= 50m; i += .01m)
             {
                 decimal correctAnswer = (2 * (decimal)Math.Pow((double)i, 3)) - (4 * (decimal)Math.Pow((double)i, 2)) + (3 * i) + 3; ;
