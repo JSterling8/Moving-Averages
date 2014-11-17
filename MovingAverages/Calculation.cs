@@ -88,13 +88,16 @@ namespace MovingAverages
                 return -1;
             }
             
-            List<Entry> updatedDatesAndPrices = new List<Entry>();
             if (datesAndPrices.Count < maxPossibleNumOfEntries)
             {
-                updatedDatesAndPrices = interpolate(datesAndPrices, maxPossibleNumOfEntries);
+                datesAndPrices = interpolate(datesAndPrices, maxPossibleNumOfEntries);
 
             }
 
+            if (datesAndPrices.Count < maxPossibleNumOfEntries)
+            {
+                datesAndPrices = extrapolate(datesAndPrices, maxPossibleNumOfEntries);
+            }
 
             decimal sum = 0;
 
@@ -103,9 +106,7 @@ namespace MovingAverages
                 sum += entry.Price;
             }
 
-
             return sum / ((decimal)datesAndPrices.Count);
-
         }
 
         private List<Entry> interpolate(List<Entry> datesAndPrices, int maxPossibleNumOfEntries)
@@ -137,6 +138,30 @@ namespace MovingAverages
                     datesAndPrices.Insert(j, new Entry(dateToInsert, priceToInsert));
                     j--;
                 }
+            }
+
+            return datesAndPrices;
+        }
+
+        // This method only works for a list of contiguous prices (call interpolate() first to make your list contiguous).
+        private List<Entry> extrapolate(List<Entry> datesAndPrices, int maxNumberOfEntries)
+        {
+            decimal[] xValues = new decimal[datesAndPrices.Count];
+            decimal[] yValues = new decimal[datesAndPrices.Count];
+
+            for (int i = 0; i < datesAndPrices.Count; i++)
+            {
+                xValues[i] = i;
+                yValues[i] = datesAndPrices.ElementAt(i).Price;
+            }
+
+            int numberOfExtrapolationsToCalculate = maxNumberOfEntries - datesAndPrices.Count;
+
+            for (int j = 0; j < numberOfExtrapolationsToCalculate; j++)
+            {
+                decimal priceToInsert = LagrangeInterpolater.getInterpolatedValueGivenCurrentValuesAndIndexToFind(xValues, yValues, 0 - j);
+                DateTime dateToInsert = datesAndPrices.ElementAt(0).Date.Subtract(new TimeSpan(0, 1, 0));
+                datesAndPrices.Insert(0, new Entry(dateToInsert, priceToInsert));
             }
 
             return datesAndPrices;

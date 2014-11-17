@@ -50,10 +50,8 @@ namespace MovingAveragesTest
             Dataset result = calulation.calculateAllMovingAverages(10);
             Assert.AreEqual(1.645M, result.getEntries().Last().Price);
 
-            // For commented out test below to pass, we'd have to extrapolate outside of our date range.
-            // To do so, I'd have to make the assumption that our "reliable data" continues downwards, 
-            // however I can't possibly know that about the , so I'm not going to make that assumption.
-            // Assert.AreEqual(1.545M, result.getEntries().First().Price);
+            // Requires extrapolation
+            Assert.AreEqual(1.545M, result.getEntries().First().Price);
         }
     }
 }
