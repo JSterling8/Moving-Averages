@@ -9,30 +9,30 @@ namespace MovingAveragesTest
     [TestClass]
     public class DatasetTests
     {
+        private Dataset dataset;
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            dataset = new Dataset();
+            dataset.load("MovingAveragesData.csv"); 
+        }
+
         [TestMethod]
         public void LoadCountTest()
         {
-            Dataset dataset = new Dataset();
-            dataset.load("MovingAveragesData.csv");            
-
             Assert.AreEqual(2843, dataset.getEntries().Count );
         }
 
         [TestMethod]
         public void FirstEntryPriceTest()
         {
-            Dataset dataset = new Dataset();
-            dataset.load("MovingAveragesData.csv");
-
             Assert.AreEqual(1.33877M, dataset.getEntries().First().Price);
         }
 
         [TestMethod]
         public void ShowAllEntriesTest()
         {
-            Dataset dataset = new Dataset();
-            dataset.load("MovingAveragesData.csv");
-
             foreach( Entry entry in dataset.getEntries() )
             {
                 Console.WriteLine(entry);
@@ -40,11 +40,8 @@ namespace MovingAveragesTest
         }
 
         [TestMethod]
-        public void TestIndexLookup()
+        public void TestValidIndexLookup()
         {
-            Dataset dataset = new Dataset();
-            dataset.load("MovingAveragesData.csv");
-
             // Invalid range (before any valid data)
             Assert.AreEqual(-1, dataset.getIndexGivenDateTime(new DateTime(2013, 08, 01, 00, 01, 00)));
 
@@ -59,8 +56,18 @@ namespace MovingAveragesTest
             //End
             Assert.AreEqual(2841, dataset.getIndexGivenDateTime(new DateTime(2014, 08, 04, 23, 59, 00)));
             Assert.AreEqual(2842, dataset.getIndexGivenDateTime(new DateTime(2014, 08, 05, 00, 00, 00)));
+        }
 
-            // Invalid range (after any valid data)
+        [TestMethod]
+        public void TestLookupOfInvalidIndexes()
+        {
+            // Invalid date (before any valid data)
+            Assert.AreEqual(-1, dataset.getIndexGivenDateTime(new DateTime(2013, 08, 01, 00, 01, 00)));
+
+            // Invalid date (in middle where there's no date)
+            Assert.AreEqual(-1, dataset.getIndexGivenDateTime(new DateTime(2013, 08, 02, 00, 01, 00)));
+
+            // Invalid date (after any valid data)
             Assert.AreEqual(-1, dataset.getIndexGivenDateTime(new DateTime(2015, 08, 01, 00, 01, 00)));
         }
     }    

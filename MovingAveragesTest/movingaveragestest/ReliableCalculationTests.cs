@@ -10,7 +10,7 @@ namespace MovingAveragesTest
     [TestClass]
     public class ReliableCalculationTests
     {
-        protected Dataset reliableDataset;
+        private Dataset reliableDataset;
 
         [TestInitialize]
         public void initialise()
@@ -48,10 +48,12 @@ namespace MovingAveragesTest
         {
             Calculation calulation = new Calculation(reliableDataset);
             Dataset result = calulation.calculateAllMovingAverages(10);
-
-            // FIXME Implement interpolation and extrapolation so that these tests pass.
-            // Assert.AreEqual(1.545M, result.getEntries().First().Price);
             Assert.AreEqual(1.645M, result.getEntries().Last().Price);
+
+            // For commented out test below to pass, we'd have to extrapolate outside of our date range.
+            // To do so, I'd have to make the assumption that our "reliable data" continues downwards, 
+            // however I can't possibly know that about the , so I'm not going to make that assumption.
+            // Assert.AreEqual(1.545M, result.getEntries().First().Price);
         }
     }
 }

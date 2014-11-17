@@ -49,12 +49,14 @@ namespace MovingAverages
             DateTime startTime = endTime.Subtract(new TimeSpan(00, (minute), 00));
             int endIndex = dataset.getIndexGivenDateTime(endTime);
 
+            List<DateTime> dates = new List<DateTime>();
             List<decimal> prices = new List<decimal>();
 
             while (endIndex >= 0)
             {
                 if (entries.ElementAt(endIndex).Date > startTime)
                 {
+                    dates.Add(entries.ElementAt(endIndex).Date);
                     prices.Add(entries.ElementAt(endIndex).Price);
                     endIndex--;
                 }
@@ -64,11 +66,13 @@ namespace MovingAverages
                 }
             }
 
-            return calculateAveragePrice(prices);
+            return calculateAveragePrice(dates, prices, minute);
         }
 
-        private decimal calculateAveragePrice(List<decimal> prices)
+        private decimal calculateAveragePrice(List<DateTime> dates, List<decimal> prices, int maxPossibleNumOfEntries)
         {
+            List<Entry> pricesAndDates = new List<Entry>();
+            
             decimal sum = 0;
             
             foreach(decimal data in prices){

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace MovingAveragesTest
 {
     [TestClass]
-    public class ProvidedDataCalculationTest
+    public class ProvidedDataCalculationTests
     {
         private Dataset providedData;
         private Calculation calculation;
