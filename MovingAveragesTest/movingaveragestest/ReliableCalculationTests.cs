@@ -12,6 +12,8 @@ namespace MovingAveragesTest
     {
         private const decimal TOLERANCE = 0.0000000000001m;
         private Dataset reliableDataset;
+        private Calculation calulation;
+        private Dataset results;
 
         [TestInitialize]
         public void initialise()
@@ -33,6 +35,8 @@ namespace MovingAveragesTest
             }
 
             reliableDataset.load(dates, prices);
+
+            calulation = new Calculation(reliableDataset);
         }
 
         [TestMethod]
@@ -45,19 +49,63 @@ namespace MovingAveragesTest
         }
 
         [TestMethod]
-        public void basicCalculationTest()
+        public void TestBasicCalculation()
         {
-            Calculation calulation = new Calculation(reliableDataset);
-            Dataset results = calulation.calculateAllMovingAverages(10);
+            results = calulation.calculateAllMovingAverages(10);
             Assert.AreEqual(1.645M, results.getEntries().Last().Price);
+            
+        }
+        
+        [TestMethod]
+        public void TestExtrapolatedCalculation()
+        {
+            results = calulation.calculateAllMovingAverages(10);
 
-            // Requires extrapolation
             decimal expectedValue = 1.545M;
             decimal actualValue = results.getEntries().First().Price;
             decimal difference = Math.Abs(expectedValue - actualValue);
             Assert.IsTrue(difference <= TOLERANCE, "The difference between the expected and actual value was too great." + Environment.NewLine +
                                                             "The maximum allowed difference is: " + TOLERANCE + Environment.NewLine +
                                                             "The actual difference was: " + difference);
+        }
+
+        [TestMethod]
+        public void TestWhenRangeIsEqualToSize()
+        {
+            Dataset results = calulation.calculateAllMovingAverages(reliableDataset.getEntries().Count);
+
+            decimal expectedValue = 1.595M;
+            decimal actualValue = results.getEntries().Last().Price;
+            Assert.AreEqual(expectedValue, actualValue);
+        }
+
+        [TestMethod]
+        public void TestRangeOfZero()
+        {
+            results = calulation.calculateAllMovingAverages(0);
+
+            for (int i = 0; i < results.getEntries().Count; i++)
+            {
+                Assert.AreEqual(reliableDataset.getEntries().ElementAt(i), results.getEntries().ElementAt(i));
+            }
+        }
+
+        [TestMethod]
+        public void TestNegativeRange()
+        {
+            ArgumentOutOfRangeException exceptionWeShouldCatch = null;
+
+            try{
+                results = calulation.calculateAllMovingAverages(-1);
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                exceptionWeShouldCatch = e;
+            }
+            finally
+            {
+                Assert.IsNotNull(exceptionWeShouldCatch);   
+            }
         }
     }
 }
